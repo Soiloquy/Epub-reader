@@ -5,24 +5,29 @@
             <span>{{ icon }}</span>
             </div>
             <div class="search-wrapper">
-                <input type="text" placeholder="输入书名，进行筛选">
+                <input type="text" placeholder="输入书名，进行筛选" v-model="inputValue" @input="inputChanged">
             </div>
         </div>
     </div>
 </template>
 
-<script>
-    export default {
-        data(){
-            return{
-                inputData:''
-            }
-        },
-        props:{
-            title:{type:String,default:''},
-            icon:{type:String,default:''}
-        }
+<script setup>
+import {ref} from 'vue'
+
+let inputValue=ref('')
+
+const props=defineProps({
+    title:{type:String,default:''},
+    icon:{type:String,default:''}
+})
+
+let tmp=''
+const inputChanged=(e)=>{
+    if(inputValue.value!=''&&inputValue.value!==tmp){
+        tmp=inputValue.value
+        console.log(inputValue.value);
     }
+}
 </script>
 
 <style lang="less" scoped>
@@ -40,7 +45,7 @@
         box-shadow: 0px 2px 20px 2px #e6e6e6;
         .title{
             font-size: 24px;
-            font-weight: 700;
+            font-weight: 600;
             margin: 5px 0 0 28px;
             color: rgb(0, 0, 0);
             position: relative;

@@ -27,10 +27,11 @@
         background-color: #fff;
         border-bottom: 1px solid #f5f5f5;
         box-shadow: 0px 2px 20px 2px #e6e6e6;
+        z-index: 100;
     }
     .title{
         font-size: 24px;
-        font-weight: 700;
+        font-weight: 600;
         margin: 8px 0 0 14px;
         color: rgb(0, 0, 0);
     }
