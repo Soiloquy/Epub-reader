@@ -74,3 +74,8 @@ body {
 .clearfix {
     *zoom: 1
 }
+/* 按钮按下样式 */
+button:active {
+    background-color: #e2e2e2;
+    border-radius: 10%;
+  }
