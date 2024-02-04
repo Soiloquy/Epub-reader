@@ -28,7 +28,6 @@
             <div class="item">
                 <router-link to="/home" active-class="nav-color">
                     <div class="font">&#xe612;<div class="word">主页</div></div>
-                    
                 </router-link>
             </div>
         </div>

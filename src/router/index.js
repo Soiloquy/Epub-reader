@@ -22,7 +22,7 @@ let router=createRouter({
         {
             path:'/bookshelf',
             component:()=>import('../views/bookshelf'),
-            name:'bookshelf'
+            name:'bookshelf',
         },
         {
             path:'/cloud',
@@ -55,6 +55,11 @@ let router=createRouter({
                 title:'任意路由',
                 hidden:true
             }
+        },
+        {
+            path:'/ebook',
+            component:()=>import('../views/ebook'),
+            name:'ebook'
         }
     ]
 })

@@ -6,7 +6,7 @@
             <button class="sort">排序<span>&#xe8d8;</span></button>
         </div>
         <div class="big-content">
-            <div class="book-content" v-for="item in 11">
+            <div class="book-content" v-for="item in 11" @click="gotoEbook">
                 <div class="time">12天前读过</div>
                 <img src="../../assets/02.jpg" alt="">
                 <div class="intro">天才在左 疯子在右【累计销量破500万册！借疯子的策略，唤醒你未知的灵魂！高圆圆、陈乔恩、李宇春、胡歌、刘昊然盛情推荐！】 (高铭)</div>
@@ -17,15 +17,17 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import Footer from '../../components/Footer.vue'
 import Header from '../../components/header-bar-search.vue'
-    export default {
-        components:{
-            Footer,
-            Header
-        }
-    }
+import { useRouter } from 'vue-router'
+
+const router=useRouter()
+
+let gotoEbook=()=>{
+    router.push({path:'/ebook'})
+    console.log(123);
+}
 </script>
 
 <style lang="less" scoped>
@@ -71,6 +73,7 @@ import Header from '../../components/header-bar-search.vue'
         .time{
             color: #929091;
             margin:0 0 5px 3px;
+            font-size: 12px;
         }
         img{
             width: 100%;
