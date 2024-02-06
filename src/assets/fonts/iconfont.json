@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "35072811",
+      "name": "search-right",
+      "font_class": "search-right",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "1596780",
+      "name": "back_android_light",
+      "font_class": "back_android_light",
+      "unicode": "e7ed",
+      "unicode_decimal": 59373
+    },
+    {
+      "icon_id": "2076262",
+      "name": "目录",
+      "font_class": "mulu",
+      "unicode": "e890",
+      "unicode_decimal": 59536
+    },
+    {
+      "icon_id": "5835476",
+      "name": "书签",
+      "font_class": "shuqian",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "6834895",
+      "name": "文件-笔记本",
+      "font_class": "wj-bjb",
+      "unicode": "e77f",
+      "unicode_decimal": 59263
+    },
+    {
+      "icon_id": "7546304",
+      "name": "书签",
+      "font_class": "shuqian1",
+      "unicode": "e7b5",
+      "unicode_decimal": 59317
+    },
+    {
+      "icon_id": "9567589",
+      "name": "settings",
+      "font_class": "settings",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
       "icon_id": "23949899",
       "name": "倒三角",
       "font_class": "daosanjiao",

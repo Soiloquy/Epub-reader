@@ -26,7 +26,6 @@ const router=useRouter()
 
 let gotoEbook=()=>{
     router.push({path:'/ebook'})
-    console.log(123);
 }
 </script>
 
