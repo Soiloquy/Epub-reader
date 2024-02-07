@@ -17,25 +17,15 @@
                 </div>
             </div>
         </transition>
-        <transition name="fade-up">
-            <div class="menu-wrapper" v-show="MenuShowFlag">
-                <div class="catalog-icon icon">&#xe890;
-                    <div class="word">目录</div>
-                </div>
-                <div class="note-icon icon">&#xe77f;
-                    <div class="word">笔记</div>
-                </div>
-                <div class="all-bookmark-icon icon">&#xe7b5;
-                    <div class="word">书签</div>
-                </div>
-                <div class="setting-icon icon" @click="settingsChange">&#xe601;
-                    <div class="word">设置</div>
-                </div>
-            </div>
-        </transition>
+        <ButtonNav @settingsChange="settingsChange"
+                    :MenuShowFlag="MenuShowFlag"
+                    @onProgressChange="onProgressChange"></ButtonNav>
         <Setting :SettingFlag="SettingFlag"
-        @fontSizeDown="fontSizeDown"
-        @fontSizeUp="fontSizeUp"></Setting>
+                 @fontSizeDown="fontSizeDown"
+                 @fontSizeUp="fontSizeUp"
+                 :themeList="themeList"
+                 :defaultTheme="defaultTheme"
+                 @setTheme="setTheme"></Setting>
     </div>
 </template>
 
@@ -44,11 +34,13 @@ import { ref,reactive } from 'vue';
 import { onMounted } from 'vue';
 import Epub from 'epubjs'
 import Setting from '../../components/Setting.vue'
+import ButtonNav from './buttonNav'
 
-let rendition=''
+let rendition
+let themes
 const DOWNLOAD_URL='/01.epub'
-let MenuShowFlag=ref(false)
-let SettingFlag=ref(true)
+let MenuShowFlag=ref(true)
+let SettingFlag=ref(false)
 const defaultFontSize=18
 let fontSizeIndex=3
 const FontSize=reactive([
@@ -60,7 +52,55 @@ const FontSize=reactive([
     {fontSize:22},
     {fontSize:24},
 ])
-let themes
+const themeList=([
+    {
+        name:'white',
+        style:{
+            body:{
+                'color':'#000',
+                'background':'#fff!important'
+            }
+        }
+    },
+    {
+        name:'eye',
+        style:{
+            body:{
+                'color':'#5b4636',
+                'background':'#f4ecd8!important'
+            }
+        }
+    },
+    {
+        name:'cyan',
+        style:{
+            body:{
+                'color':'#333333',
+                'background':'#ceeaba!important'
+            }
+        }
+    },
+    {
+        name:'gray',
+        style:{
+            body:{
+                'color':'#9d9fa3',
+                'background':'#45484a!important'
+            }
+        }
+    },
+    {
+        name:'night',
+        style:{
+            body:{
+                'color':'#b5aca2',
+                'background':'#333333!important',
+            }
+        }
+    },
+])
+let defaultTheme=ref(0)
+let locations=''
 
 const fontSizeDown=()=>{
     if (fontSizeIndex<=0) {
@@ -78,33 +118,74 @@ const fontSizeUp=()=>{
         return
     }else{
         fontSizeIndex++
-        console.log(FontSize[fontSizeIndex].fontSize,fontSizeIndex);
         themes.fontSize(FontSize[fontSizeIndex].fontSize+'px')
     }
 }
-const showEpub=()=>{
-    let book=Epub(DOWNLOAD_URL)
+const setTheme=(index)=>{
+    defaultTheme.value=index
+    themes.select(themeList[index].name)
+}
+const registerTheme=()=>{
+    themeList.forEach(theme=>{
+        themes.register(theme.name,theme.style)
+    })
+}
 
+// progress进度条的数值(0-100)
+const onProgressChange=(progress)=>{
+    const percentage=progress/100
+    const location=percentage>0?locations.cfiFromPercentage(percentage):0
+    rendition.display(location)
+
+}
+
+const showEpub=()=>{
+    // 生成book对象
+    let book=Epub(DOWNLOAD_URL)
+    // 通过book.renderTo()生成rendition对象
     rendition=book.renderTo('read',{
         width:window.innerWidth,
         height:window.innerHeight
     })
+    // 通过Rendition.display()渲染电子书
     rendition.display()
+    // 获取Theme对象
     themes=rendition.themes
+    // 设置默认字体大小
     themes.fontSize(defaultFontSize+'px')
+    // themes.register注册主题
+    registerTheme()
+    // 设置默认主题
+    setTheme(defaultTheme.value)
+    // 获取Locations对象
+    // 通过epubjs的钩子函数来实现
+    // book.ready 电子书解析完成时执行的回调
+    book.ready.then(()=>{
+        return book.locations.generate()
+    }).then(result=>{
+        locations=book.locations
+        onProgressChange(0)
+    })
 }
-const prevPage=()=>{
-    if (SettingFlag.value!=true) {
-        rendition.prev()
+
+const judgeSettingFlag=()=>{
+    if (SettingFlag.value!=true&&MenuShowFlag.value!=true) {
+        return false
+    }else if(MenuShowFlag.value==true){
+        MenuShowFlag.value=false
     }else{
         SettingFlag.value=false
     }
+    return true
+}
+const prevPage=()=>{
+    if (!judgeSettingFlag()) {
+        rendition.prev()
+    }
 }
 const nextPage=()=>{
-    if (SettingFlag.value!=true) {
+    if (!judgeSettingFlag()) {
         rendition.next()
-    }else{
-        SettingFlag.value=false
     }
 }
 
@@ -194,36 +275,6 @@ onMounted(()=>{
                 font-size: 28px;
                 padding-top: 3px;
             }
-        }
-    }
-    .menu-wrapper{
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        z-index: 101;
-        display: flex;
-        width: 100%;
-        height: 80px;
-        background-color: #fff;
-        color: #aaaaaa;
-        box-shadow: 0 -3px 3px rgba(0, 0, 0, .1);
-        &.fade-up-enter-active,
-        &.fade-up-leave-active {
-        transition: opacity 0.3s ease;
-        }
-
-        &.fade-up-enter-from,
-        &.fade-up-leave-to {
-        opacity: 0;
-        }
-        .icon{
-            flex: 1;
-            text-align: center;
-            padding-top: 5px;
-        }
-        .word{
-            font-size: 18px;
-            color: #646464;
         }
     }
 }

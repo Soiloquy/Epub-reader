@@ -41,6 +41,7 @@ let gotoEbook=()=>{
         margin: 20px 0 0 0;
         display: block;
         font-size: 18px;
+        background-color: #fff;
         span{
             font-family: "iconfont";
             font-size: 24px;
@@ -52,6 +53,7 @@ let gotoEbook=()=>{
     .sort{
         margin: 20px 0 0 0;
         font-size: 18px;
+        background-color: #fff;
         span{
             font-family: "iconfont";
             font-size: 24px;
