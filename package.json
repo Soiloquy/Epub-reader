@@ -13,6 +13,7 @@
     "epubjs": "0.3.71",
     "less": "^4.2.0",
     "less-loader": "^12.1.0",
+    "mitt": "^3.0.1",
     "postcss-nested": "^6.0.1",
     "postcss-pxtorem": "5.1.1",
     "vue": "^3.2.13",

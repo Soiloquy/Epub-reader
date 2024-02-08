@@ -16,7 +16,9 @@
                 </div>
                 <div class="interval settings">间距</div>
                 <div class="paging settings">翻页</div>
-                <div class="more-setting settings">更多设置</div>
+                <div class="more-setting settings">更多设置
+                    <div class="more icon">&#xe642;</div>
+                </div>
             </div>
         </transition>
     </div>
@@ -76,6 +78,14 @@ watch(()=>props.defaultTheme,(newVal)=>{
             margin: 0 auto;
             line-height: 56px;
             border-bottom: 1px solid #d4d4d4;
+            position: relative;
+            .more{
+                position: absolute;
+                font-size: 28px;
+                font-weight: 700;
+                right: 5px;
+                top: 2px;
+            }
         }
         .font-size{
             display: flex;

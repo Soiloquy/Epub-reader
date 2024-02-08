@@ -17,9 +17,9 @@
                 </div>
             </div>
         </transition>
-        <ButtonNav @settingsChange="settingsChange"
+        <BottomNav @settingsChange="settingsChange"
                     :MenuShowFlag="MenuShowFlag"
-                    @onProgressChange="onProgressChange"></ButtonNav>
+                    @onProgressChange="onProgressChange"></BottomNav>
         <Setting :SettingFlag="SettingFlag"
                  @fontSizeDown="fontSizeDown"
                  @fontSizeUp="fontSizeUp"
@@ -27,19 +27,22 @@
                  :defaultTheme="defaultTheme"
                  @setTheme="setTheme"></Setting>
     </div>
+    <Catalog @jumpTo="jumpTo"
+    :bookAvailable="bookAvailable"></Catalog>
 </template>
 
 <script setup>
-import { ref,reactive } from 'vue';
-import { onMounted } from 'vue';
+import { ref,reactive,onBeforeMount,onMounted } from 'vue';
 import Epub from 'epubjs'
+import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
-import ButtonNav from './buttonNav'
+import BottomNav from './bottomNav/bottom-nav.vue'
+import Catalog from './bottomNav/components/catalog.vue'
 
 let rendition
 let themes
 const DOWNLOAD_URL='/01.epub'
-let MenuShowFlag=ref(true)
+let MenuShowFlag=ref(false)
 let SettingFlag=ref(false)
 const defaultFontSize=18
 let fontSizeIndex=3
@@ -101,6 +104,12 @@ const themeList=([
 ])
 let defaultTheme=ref(0)
 let locations=''
+let bookAvailable=ref(false)
+
+// 根据链接跳转到指定位置
+const jumpTo=(href)=>{
+    rendition.display(href)
+}
 
 const fontSizeDown=()=>{
     if (fontSizeIndex<=0) {
@@ -161,10 +170,12 @@ const showEpub=()=>{
     // 通过epubjs的钩子函数来实现
     // book.ready 电子书解析完成时执行的回调
     book.ready.then(()=>{
+        mitter.emit('navigation',book)
         return book.locations.generate()
     }).then(result=>{
         locations=book.locations
         onProgressChange(0)
+        bookAvailable.value=true
     })
 }
 
@@ -204,8 +215,15 @@ const settingsChange=()=>{
     }
 }
 
-onMounted(()=>{
+onBeforeMount(()=>{
     showEpub()
+    mitter.on('menuBarChange',e=>{
+        MenuShowFlag.value=e
+    })
+})
+
+onMounted(()=>{
+    
 })
 </script>
 
@@ -278,5 +296,4 @@ onMounted(()=>{
         }
     }
 }
-
 </style>

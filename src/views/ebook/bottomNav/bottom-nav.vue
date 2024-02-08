@@ -2,9 +2,18 @@
     <div>
         <transition name="fade-up">
             <div class="menu-wrapper" v-show="MenuShowFlag">
+                <transition name="show">
+                    <div class="section-now-wrapper" v-show="bubbleFlag">
+                        <div class="left">
+                            <div class="section-now">1233</div>
+                            <div class="pro-pre">{{ progress }}%</div>
+                        </div>
+                        <div class="right icon" @click="backSection">&#xe649;</div>
+                    </div>
+                </transition>
                 <div class="progress-bar">
                     <div class="left icon">&#xe628;</div>
-                    <div class="center">
+                    <div class="center" @touchstart="bubbleShow" @touchend="bubbleDisappear">
                         <input class="progress" type="range"
                                max="100" min="0" step="1"
                                :value="progress"
@@ -16,7 +25,7 @@
                     <div class="right icon">&#xe642;</div>
                 </div>
                 <div class="items">
-                    <div class="catalog-icon icon">&#xe890;
+                    <div class="catalog-icon icon"  @click="openCatalog">&#xe890;
                         <div class="word">目录</div>
                     </div>
                     <div class="note-icon icon">&#xe77f;
@@ -36,9 +45,11 @@
 
 <script setup>
 import { defineProps,defineEmits,ref } from 'vue';
+import mitter from '@/plugins/Bus';
 
 let progressEle=ref()
 let progress=ref(0)
+let bubbleFlag=ref(true)
 const emit=defineEmits(['settingsChange','onProgressChange','update:progress'])
 const props=defineProps({
     MenuShowFlag:{type:Boolean,default:false}
@@ -53,11 +64,39 @@ const onProgressChange=(value)=> {
 const onProgressInput=(e)=> {
     progress.value=e
 }
+
+const openCatalog=()=>{
+    mitter.emit('openCatalog',true)
+    mitter.emit('menuBarChange',false)
+}
+
+let tmpSec=0
+const bubbleShow=()=>{
+    tmpSec=progress.value
+    if (!bubbleFlag.value) {
+        bubbleFlag.value=true
+    }
+}
+
+let timer
+const bubbleDisappear=()=>{
+    timer=setTimeout(()=>{
+        bubbleFlag.value=false
+    },5000)
+}
+
+const backSection=()=>{
+    progress.value=tmpSec
+    onProgressChange(progress.value)
+    clearInterval(timer)
+    bubbleDisappear()
+}
 </script>
 
 <style lang="less" scoped>
 .menu-wrapper{
         position: absolute;
+        // position: relative;
         bottom: 0;
         left: 0;
         z-index: 101;
@@ -75,10 +114,41 @@ const onProgressInput=(e)=> {
         &.fade-up-leave-to {
         opacity: 0;
         }
+        .section-now-wrapper{
+            position: absolute;
+            display: flex;
+            width: 200px;
+            height: 66px;
+            background-color: black;
+            align-items: center;
+            top: -90px;
+            left: 80px;
+            border-radius: 33px;
+            .left{
+                margin-left: 30px;
+                font-size: 22px;
+                flex: 1;
+                .section-now{
+                    height: 33px;
+                    line-height: 33px;
+                    word-break: break-all;
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                }
+            }
+            .right{
+                flex: .3;
+                color: #f5f5f5;
+                font-size: 40px;
+                margin-right: 10px;
+                border-left: 1px solid #565656;
+            }
+        }
         .progress-bar{
             width: 100%;
             height: 60px;
-            // background-color: #646464;
             display: flex;
             align-items: center;
             .center{
@@ -117,5 +187,6 @@ const onProgressInput=(e)=> {
             font-size: 18px;
             color: #646464;
         }
-    }
+}
+
 </style>
