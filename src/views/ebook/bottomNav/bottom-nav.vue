@@ -44,12 +44,12 @@
 </template>
 
 <script setup>
-import { defineProps,defineEmits,ref } from 'vue';
+import { defineProps,defineEmits,ref,watch } from 'vue';
 import mitter from '@/plugins/Bus';
 
 let progressEle=ref()
 let progress=ref(0)
-let bubbleFlag=ref(true)
+let bubbleFlag=ref(false)
 const emit=defineEmits(['settingsChange','onProgressChange','update:progress'])
 const props=defineProps({
     MenuShowFlag:{type:Boolean,default:false}
@@ -82,7 +82,7 @@ let timer
 const bubbleDisappear=()=>{
     timer=setTimeout(()=>{
         bubbleFlag.value=false
-    },5000)
+    },3000)
 }
 
 const backSection=()=>{
@@ -91,6 +91,11 @@ const backSection=()=>{
     clearInterval(timer)
     bubbleDisappear()
 }
+
+watch(()=>props.MenuShowFlag,()=>{
+    clearInterval(timer)
+    bubbleFlag.value=false
+})
 </script>
 
 <style lang="less" scoped>
@@ -124,6 +129,15 @@ const backSection=()=>{
             top: -90px;
             left: 80px;
             border-radius: 33px;
+            &.show-enter-active,
+            &.show-leave-active {
+            transition: opacity 0.5s ease;
+            }
+
+            &.show-enter-from,
+            &.show-leave-to {
+            opacity: 0;
+            }
             .left{
                 margin-left: 30px;
                 font-size: 22px;

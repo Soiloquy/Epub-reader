@@ -1,7 +1,7 @@
 <template>
     <div>
         <Header title="云端存储" icon="&#xe60f;"></Header>
-        云端导入
+        
         <Footer></Footer>
     </div>
 </template>
@@ -17,6 +17,6 @@ import Header from '../../components/header-bar-search.vue'
     }
 </script>
 
-<style lang="css" scoped>
+<style lang="less" scoped>
 
 </style>
