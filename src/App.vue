@@ -1,11 +1,14 @@
 <template>
-  <div>
+  <!-- <div>
     <router-view></router-view>
-  </div>
+  </div> -->
+  <IonPage>
+    <router-view></router-view>
+  </IonPage>
 </template>
 
-<script>
-
+<script setup>
+import { IonPage } from '@ionic/vue';
 </script>
 
 <style>
