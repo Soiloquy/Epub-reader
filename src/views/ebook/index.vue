@@ -29,6 +29,7 @@
     </div>
     <Catalog @jumpTo="jumpTo"
     :bookAvailable="bookAvailable"></Catalog>
+    <Toast ref="toast"></Toast>
 </template>
 
 <script setup>
@@ -38,6 +39,7 @@ import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
 import BottomNav from './bottomNav/bottom-nav.vue'
 import Catalog from './bottomNav/components/catalog.vue'
+import Toast from '../../utils/toast.vue'
 
 let rendition
 let themes
@@ -105,6 +107,7 @@ const themeList=([
 let defaultTheme=ref(0)
 let locations=''
 let bookAvailable=ref(false)
+let toast=ref()
 
 // 根据链接跳转到指定位置
 const jumpTo=(href)=>{
@@ -113,17 +116,16 @@ const jumpTo=(href)=>{
 
 const fontSizeDown=()=>{
     if (fontSizeIndex<=0) {
-        console.log('最小了');
+        toast.value.showMessage('最小了')
         return
     }else{
         fontSizeIndex--
-        console.log(FontSize[fontSizeIndex].fontSize,fontSizeIndex);
         themes.fontSize(FontSize[fontSizeIndex].fontSize+'px')
     }
 }
 const fontSizeUp=()=>{
     if (fontSizeIndex>=6) {
-        console.log('最大了');
+        toast.value.showMessage('最大了')
         return
     }else{
         fontSizeIndex++
