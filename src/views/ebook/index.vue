@@ -145,7 +145,6 @@ const onProgressChange=(progress)=>{
     const percentage=progress/100
     const location=percentage>0?locations.cfiFromPercentage(percentage):0
     rendition.display(location)
-    console.log(locations.currentLocation,locations.length());
 }
 
 const showEpub=()=>{
@@ -176,7 +175,6 @@ const showEpub=()=>{
         locations=book.locations
         onProgressChange(10)
         bookAvailable.value=true
-        console.log(book);
     })
 }
 

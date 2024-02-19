@@ -9,7 +9,18 @@
                     </div>
                     <div class="bkc night icon" :class="{'select':thisDefaultTheme===4}" @click="setTheme(4)">&#xe608;</div>
                 </div>
-                <div class="intensity-control settings">亮度</div>
+                <div class="intensity-control settings">
+                    <div class="text">亮度</div>
+                    <div class="center"  @touchmove="changeBrightness" @touchend="changeBrightness">
+                        <input class="progress" type="range"
+                               max="100" min="0" step="1"
+                               :value="progress"
+                               ref="progressEle"
+                               @input="brightnessInput(progressEle.value)"
+                        >
+                    </div>
+                    <button class="auto-button" @click="changeBrightnessAuto" :class="{'auto':brightnessAuto==true}">自动</button>
+                </div>
                 <div class="font-size settings">字体
                     <button @click="fontSizeDown">A-</button>
                     <button @click="fontSizeUp">A+</button>
@@ -26,6 +37,7 @@
 
 <script setup>
 import { defineProps,defineEmits,watch,ref } from 'vue';
+import { ScreenBrightness } from '@capacitor-community/screen-brightness';
 
 
 const emit=defineEmits(['fontSizeDown','fontSizeUp','setTheme'])
@@ -34,7 +46,34 @@ const props=defineProps({
     themeList:{type:Array,default:[]},
     defaultTheme:{type:Number,default:0}
 })
+let progress=ref(30)
+let progressEle=ref()
+let brightnessAuto=ref(true)
+
 let thisDefaultTheme=ref(props.defaultTheme)
+
+const changeBrightness=async ()=>{
+    if (brightnessAuto.value==true) {
+        brightnessAuto.value=false
+    }
+    // Set the brightness:
+    let brightness=progress.value/100
+    await ScreenBrightness.setBrightness({ brightness });
+
+    // Get the current brightness:
+    const getbrightness = await ScreenBrightness.getBrightness();
+}
+
+const brightnessInput=(e)=>{
+    progress.value=e
+}
+
+const changeBrightnessAuto=async()=>{
+    brightnessAuto.value=true
+    const brightness=-1
+    await ScreenBrightness.setBrightness({brightness})
+    progress.value=30
+}
 const fontSizeDown=()=>{
     emit('fontSizeDown')
 }
@@ -122,6 +161,45 @@ watch(()=>props.defaultTheme,(newVal)=>{
                 text-align: center;
                 font-size: 25px;
                 background-color: #333333;
+            }
+        }
+        .intensity-control{
+            display: flex;
+            align-items: center;
+            .center{
+                width: 180px;
+                height: 100%;
+                line-height: 50px;
+                margin: 0 10px 0 10px;
+                .progress {
+					width:100%;
+					height:4px;
+					background:-webkit-linear-gradient(#999,#999) no-repeat #ddd;
+					background-size:0 100%;
+					&:focus {
+						outline:none;
+					}
+					&::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        height: 20px;
+                        width: 20px;
+                        border-radius: 50%;
+                        background: #fff;
+                        border: 1px solid #ddd;
+                        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .15);
+					}
+				}
+            }
+            .auto-button{
+                background-color: #fff;
+                width: 70px;
+                height: 35px;
+                font-size: 18px;
+                border: 1px solid #d4d4d4;
+                border-radius: 10px;
+                &.auto{
+                    border: 1px solid #3ca4fa;
+                }
             }
         }
     }

@@ -101,7 +101,6 @@ watch(()=>props.MenuShowFlag,()=>{
 <style lang="less" scoped>
 .menu-wrapper{
         position: absolute;
-        // position: relative;
         bottom: 0;
         left: 0;
         z-index: 101;
@@ -167,6 +166,8 @@ watch(()=>props.MenuShowFlag,()=>{
             align-items: center;
             .center{
                 width: 260px;
+                height: 100%;
+                line-height: 60px;
                 .progress {
 					width:100%;
 					height:2px;
