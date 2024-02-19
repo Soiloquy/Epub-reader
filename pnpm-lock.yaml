@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@capacitor-community/screen-brightness':
+    specifier: ^5.0.0
+    version: 5.0.0(@capacitor/core@5.7.0)
   '@capacitor/android':
     specifier: ^5.7.0
     version: 5.7.0(@capacitor/core@5.7.0)
@@ -1354,6 +1357,14 @@ packages:
       '@babel/helper-string-parser': 7.23.4
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
+
+  /@capacitor-community/screen-brightness@5.0.0(@capacitor/core@5.7.0):
+    resolution: {integrity: sha512-EaAV7mk+Noxi0Natcx8C7C7ecW9IFAsMotYHjR/Ve8R4kA0ksvvjuWoAc0YtWT0DvpXP8qViWN2xU3Q8Uz6v4w==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
+    dependencies:
+      '@capacitor/core': 5.7.0
+    dev: false
 
   /@capacitor/android@5.7.0(@capacitor/core@5.7.0):
     resolution: {integrity: sha512-0bnG1dqfT/nTjzMeHF/a5kF8mqGjHrPLADNqn41seWDfb2ch6AMiKUHsmHpEOWmGIrWOM25qNTrTOytoCSpuXg==}
