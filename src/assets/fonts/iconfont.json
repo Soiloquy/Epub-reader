@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "4983366",
+      "name": "justifyjustify",
+      "font_class": "justifyjustify",
+      "unicode": "e70b",
+      "unicode_decimal": 59147
+    },
+    {
+      "icon_id": "31834019",
+      "name": "线性三横",
+      "font_class": "xianxingsanheng",
+      "unicode": "e72f",
+      "unicode_decimal": 59183
+    },
+    {
+      "icon_id": "35430637",
+      "name": "双横线",
+      "font_class": "shuanghengxian",
+      "unicode": "e78e",
+      "unicode_decimal": 59278
+    },
+    {
       "icon_id": "29205022",
       "name": "Back",
       "font_class": "Back",
