@@ -25,7 +25,12 @@
                     <button @click="fontSizeDown">A-</button>
                     <button @click="fontSizeUp">A+</button>
                 </div>
-                <div class="interval settings">间距</div>
+                <div class="interval settings">
+                    <div class="text">间距</div>
+                    <div class="icon interval-icon" :class="{'active':interval==1}">&#xe70b;</div>
+                    <div class="icon interval-icon" :class="{'active':interval==2}">&#xe72f;</div>
+                    <div class="icon interval-icon" :class="{'active':interval==3}">&#xe78e;</div>
+                </div>
                 <div class="paging settings">翻页</div>
                 <div class="more-setting settings">更多设置
                     <div class="more icon">&#xe642;</div>
@@ -49,7 +54,7 @@ const props=defineProps({
 let progress=ref(30)
 let progressEle=ref()
 let brightnessAuto=ref(true)
-
+let interval=ref(2)
 let thisDefaultTheme=ref(props.defaultTheme)
 
 const changeBrightness=async ()=>{
@@ -199,6 +204,24 @@ watch(()=>props.defaultTheme,(newVal)=>{
                 border-radius: 10px;
                 &.auto{
                     border: 1px solid #3ca4fa;
+                }
+            }
+        }
+        .interval{
+            display: flex;
+            align-items: center;
+            .interval-icon{
+                text-align: center;
+                width: 60px;
+                height: 35px;
+                line-height: 35px;
+                font-size: 22px;
+                background-color: #e7e7e7;
+                border-radius: 15px;
+                margin-left:20px;
+                &.active{
+                    background-color: #1d1d1d;
+                    color: #fff;
                 }
             }
         }

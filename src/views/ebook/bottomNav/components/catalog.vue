@@ -29,7 +29,6 @@ const props=defineProps({
 const closeSettingHeaderBar=()=>{
     catalogShow.value=false
 }
-
 const jumpTo=(href)=>{
     catalogShow.value=false
     emit('jumpTo',href)

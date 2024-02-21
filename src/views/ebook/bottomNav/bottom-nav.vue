@@ -5,7 +5,7 @@
                 <transition name="show">
                     <div class="section-now-wrapper" v-show="bubbleFlag">
                         <div class="left">
-                            <div class="section-now">1233</div>
+                            <div class="section-now">{{ sectionName }}</div>
                             <div class="pro-pre">{{ progress }}%</div>
                         </div>
                         <div class="right icon" @click="backSection">&#xe649;</div>
@@ -17,7 +17,6 @@
                         <input class="progress" type="range"
                                max="100" min="0" step="1"
                                :value="progress"
-                               @change="onProgressChange(progressEle.value)"
                                @input="onProgressInput(progressEle.value)"
                                ref="progressEle"
                         >
@@ -47,22 +46,22 @@
 import { defineProps,defineEmits,ref,watch } from 'vue';
 import mitter from '@/plugins/Bus';
 
+let localProgress=10
 let progressEle=ref()
-let progress=ref(0)
+let progress=ref(localProgress)
 let bubbleFlag=ref(false)
-const emit=defineEmits(['settingsChange','onProgressChange','update:progress'])
+const emit=defineEmits(['settingsChange','onProgressInput','update:progress'])
 const props=defineProps({
-    MenuShowFlag:{type:Boolean,default:false}
+    MenuShowFlag:{type:Boolean,default:false},
+    sectionName:{type:String,default:'123'}
 })
 const settingsChange=()=>{
     emit('settingsChange')
 }
-const onProgressChange=(value)=> {
-    emit('onProgressChange',value);
-}
 
 const onProgressInput=(e)=> {
     progress.value=e
+    emit('onProgressInput',e);
 }
 
 const openCatalog=()=>{
@@ -80,6 +79,7 @@ const bubbleShow=()=>{
 
 let timer
 const bubbleDisappear=()=>{
+    clearInterval(timer)
     timer=setTimeout(()=>{
         bubbleFlag.value=false
     },3000)
@@ -87,7 +87,7 @@ const bubbleDisappear=()=>{
 
 const backSection=()=>{
     progress.value=tmpSec
-    onProgressChange(progress.value)
+    onProgressInput(progress.value)
     clearInterval(timer)
     bubbleDisappear()
 }

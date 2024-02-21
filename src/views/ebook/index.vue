@@ -19,7 +19,8 @@
         </transition>
         <BottomNav @settingsChange="settingsChange"
                     :MenuShowFlag="MenuShowFlag"
-                    @onProgressChange="onProgressChange"></BottomNav>
+                    :sectionName="sectionName"
+                    @onProgressInput="onProgressInput"></BottomNav>
         <Setting :SettingFlag="SettingFlag"
                  @fontSizeDown="fontSizeDown"
                  @fontSizeUp="fontSizeUp"
@@ -108,6 +109,9 @@ let defaultTheme=ref(0)
 let locations=''
 let bookAvailable=ref(false)
 let toast=ref()
+let spineItems=reactive([])
+let navigationToc=reactive([])
+let sectionName=ref('')
 
 // 根据链接跳转到指定位置
 const jumpTo=(href)=>{
@@ -143,19 +147,43 @@ const registerTheme=()=>{
 }
 
 // progress进度条的数值(0-100)
-const onProgressChange=(progress)=>{
+const onProgressInput=(progress)=>{
     const percentage=progress/100
+    // 通过locations.cfiFromPercentage(percentage) 返回每一页的epubCFI
     const location=percentage>0?locations.cfiFromPercentage(percentage):0
     rendition.display(location)
+    // 通过locations.spine.items返回包含cfiBase、href、idref、url的
+    // 对象类型的数组的所有章节
+    spineItems=locations.spine.items
+    // 通过forEach遍历 item.cfiBase找到每个章节的cfiBase
+    spineItems.forEach(item => {
+        // 用includes来判断每一页对应哪个cfiBase
+        if (location==0) {
+            sectionName.value='封面'
+        }else if (location.includes(item.cfiBase)) {
+            // 遍历navigation.toc，通过href来找到每一页对应的章节
+            for (let index = 0; index < navigationToc.length; index++) {
+                const tocHref = navigationToc[index].href;
+                if (tocHref.includes(item.href)) {
+                    sectionName.value=navigationToc[index].label.trim()
+                    // console.log(sectionName.value);
+                }
+            }
+        }
+    });
 }
 
+let book
 const showEpub=()=>{
     // 生成book对象
-    let book=Epub(DOWNLOAD_URL)
+    book=Epub(DOWNLOAD_URL)
     // 通过book.renderTo()生成rendition对象
     rendition=book.renderTo('read',{
         width:window.innerWidth,
-        height:window.innerHeight
+        height:window.innerHeight,
+        flow: "paginated",
+        manager: "continuous",
+        snap: true,
     })
     // 通过Rendition.display()渲染电子书
     rendition.display()
@@ -174,8 +202,11 @@ const showEpub=()=>{
         mitter.emit('navigation',book)
         return book.locations.generate()
     }).then(result=>{
+        // console.log(book.locations);
         locations=book.locations
-        onProgressChange(10)
+        navigationToc=book.navigation.toc
+        let localProgress=10
+        onProgressInput(localProgress)
         bookAvailable.value=true
     })
 }
