@@ -20,13 +20,17 @@
         <BottomNav @settingsChange="settingsChange"
                     :MenuShowFlag="MenuShowFlag"
                     :sectionName="sectionName"
-                    @onProgressInput="onProgressInput"></BottomNav>
+                    :inputProgress="inputProgress"
+                    @onProgressInput="onProgressInput"
+                    @getSection="getSection"
+                    @jumpTo="jumpTo"></BottomNav>
         <Setting :SettingFlag="SettingFlag"
                  @fontSizeDown="fontSizeDown"
                  @fontSizeUp="fontSizeUp"
                  :themeList="themeList"
                  :defaultTheme="defaultTheme"
-                 @setTheme="setTheme"></Setting>
+                 @setTheme="setTheme"
+                 ></Setting>
     </div>
     <Catalog @jumpTo="jumpTo"
     :bookAvailable="bookAvailable"></Catalog>
@@ -35,7 +39,7 @@
 
 <script setup>
 import { ref,reactive,onBeforeMount} from 'vue';
-import Epub, { EpubCFI } from 'epubjs'
+import Epub from 'epubjs'
 import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
 import BottomNav from './bottomNav/bottom-nav.vue'
@@ -117,14 +121,17 @@ let navigationToc=reactive([])
 let sectionName=ref('')
 let bookMark=ref(true)
 const store=useStore()
+let inputProgress=ref()
 
 // 根据链接跳转到指定位置
-const jumpTo=(href)=>{
+const jumpTo=(href,label)=>{
     rendition.display(href).then((e)=>{
         setTimeout(()=>{
             let start=rendition.location.start
+            sectionName.value=label.trim()
             store.commit('getEpubCFIandPercentage',[start.cfi,start.percentage])
-        },100)
+            inputProgress.value=Math.round(store.state.nowPagePercentage*100)
+        },50)
     })
 }
 
@@ -156,17 +163,11 @@ const registerTheme=()=>{
     })
 }
 
-// progress进度条的数值(0-100)
-const onProgressInput=(progress)=>{
-    const percentage=progress/100
-    // 通过locations.cfiFromPercentage(percentage) 返回每一页的epubCFI
-    const location=percentage>0?locations.cfiFromPercentage(percentage):0
-    rendition.display(location)
-    console.log(locations.locationFromCfi(location));
+// 通过epubcfi获取当前的章节
+const getSection=(location)=>{
     // 通过locations.spine.items返回包含cfiBase、href、idref、url的
     // 对象类型的数组的所有章节
     spineItems=locations.spine.items
-    store.commit('getEpubCFIandPercentage',[location,percentage])
     // 通过forEach遍历 item.cfiBase找到每个章节的cfiBase
     spineItems.forEach(item => {
         // 用includes来判断每一页对应哪个cfiBase
@@ -182,6 +183,17 @@ const onProgressInput=(progress)=>{
             }
         }
     });
+}
+
+// progress进度条的数值(0-100)
+const onProgressInput=(progress)=>{
+    const percentage=progress/100
+    // 通过locations.cfiFromPercentage(percentage) 返回每一页的epubCFI
+    const location=percentage>0?locations.cfiFromPercentage(percentage):0
+    rendition.display(location)
+    store.commit('getEpubCFIandPercentage',[location,percentage])
+    // console.log(locations.locationFromCfi(location));
+    getSection(location)
 }
 
 const showEpub=()=>{
@@ -210,12 +222,13 @@ const showEpub=()=>{
     // 通过epubjs的钩子函数来实现
     // book.ready 电子书解析完成时执行的回调
     book.ready.then(()=>{
-        mitter.emit('navigation',book)
+        mitter.emit('navigation',book.navigation)
         return book.locations.generate()
     }).then(result=>{
-        // console.log(book.locations);
         locations=book.locations
+        mitter.emit('locations',locations)
         navigationToc=book.navigation.toc
+        console.log(navigationToc);
         let localProgress=10
         onProgressInput(localProgress)
         bookAvailable.value=true

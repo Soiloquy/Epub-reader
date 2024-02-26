@@ -5,7 +5,7 @@
             @closeSettingHeaderBar="closeSettingHeaderBar"></HeaderBar>
             <div class="content-wrapper" v-if="bookAvailable">
                 <div class="content-item" v-for="(item,index) in navigation.toc" 
-                :key="index" @click="jumpTo(item.href)">
+                :key="index" @click="jumpTo(item.href,item.label)">
                     <span class="text">{{ item.label }}</span>
                 </div>
             </div>
@@ -29,9 +29,9 @@ const props=defineProps({
 const closeSettingHeaderBar=()=>{
     catalogShow.value=false
 }
-const jumpTo=(href)=>{
+const jumpTo=(href,label)=>{
     catalogShow.value=false
-    emit('jumpTo',href)
+    emit('jumpTo',href,label)
 }
  
 onBeforeMount(()=>{
@@ -39,9 +39,8 @@ onBeforeMount(()=>{
         catalogShow.value=e
     })
     mitter.on('navigation',e=>{
-        navigation.value=e.navigation
+        navigation.value=e
     })
-    
 })
 </script>
 

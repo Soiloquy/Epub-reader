@@ -11,7 +11,6 @@ export default createStore({
         getEpubCFIandPercentage(state,[cfi,percentage]){
             state.nowPageEpubCFI=cfi
             state.nowPagePercentage=percentage
-            console.log(state.nowPageEpubCFI,percentage);
         }
     },
     actions:{

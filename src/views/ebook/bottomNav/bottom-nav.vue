@@ -42,25 +42,40 @@
 </template>
 
 <script setup>
-import { defineProps,defineEmits,ref,watch } from 'vue';
+import { defineProps,defineEmits,ref,watch,onBeforeMount, reactive } from 'vue';
 import mitter from '@/plugins/Bus';
 import store from '@/store';
 let progressEle=ref()
 let progress=ref(10)
 // 控制显示当前阅读进度的气泡框
 let bubbleFlag=ref(false)
-const emit=defineEmits(['settingsChange','onProgressInput','update:progress'])
+let navigation=reactive({})
+let locations=reactive({})
+
+const emit=defineEmits(['settingsChange','onProgressInput','update:progress','getSection','jumpTo'])
 const props=defineProps({
     MenuShowFlag:{type:Boolean,default:false},
-    sectionName:{type:String,default:'123'}
+    sectionName:{type:String,default:''},
+    inputProgress:{type:Number,default:0}
 })
+
+
 const settingsChange=()=>{
     emit('settingsChange')
 }
 
+let timerOfInput=null
 const onProgressInput=(e)=> {
     progress.value=e
-    emit('onProgressInput',e);
+    const location=e>0?locations.cfiFromPercentage(e/100):0
+    emit('getSection',location)
+    // 防抖
+    if (timerOfInput) {
+        clearTimeout(timerOfInput)
+    }
+    timerOfInput=setTimeout(()=>{
+        emit('onProgressInput',e)
+    },200)
 }
 
 const openCatalog=()=>{
@@ -77,7 +92,7 @@ const bubbleShow=()=>{
     }
 }
 
-let timer
+let timer=null
 const bubbleDisappear=()=>{
     clearInterval(timer)
     timer=setTimeout(()=>{
@@ -92,22 +107,58 @@ const backSection=()=>{
     bubbleDisappear()
 }
 
-watch(()=>props.MenuShowFlag,(newValue,oldValue)=>{
-    if (newValue) {
-        progress.value=Math.round(store.state.nowPagePercentage*100)
-        console.log(progress.value);
+
+watch(()=>props.MenuShowFlag,(newMenuShowFlag)=>{
+    // 每次呼出导航栏 修改阅读进度条的值和存储当前阅读页面的epubcfi
+    console.log(newMenuShowFlag);
+    if (newMenuShowFlag) {
         clearInterval(timer)
+        progress.value=Math.round(store.state.nowPagePercentage*100)
+        emit('getSection',store.state.nowPageEpubCFI)
     }
     bubbleFlag.value=false
 })
-
+watch(()=>props.inputProgress,(newInputProgress)=>{
+    progress.value=newInputProgress
+    console.log(newInputProgress);
+})
 const prevSection=()=>{
-
+    for (let i = 0; i < navigation.toc.length; i++) {
+        const item = navigation.toc[i];
+        if (item.label.trim()==props.sectionName&&i!=0) {
+            const href=navigation.toc[i-1].href
+            console.log(href,i,item,navigation.toc);
+            emit('jumpTo',href,navigation.toc[i-1].label)
+            break
+        }else if(item.label.trim()==props.sectionName&&i===0){
+            emit('jumpTo',0,'封面')
+            progress.value=0
+        }
+    }
 }
 
 const nextSection=()=>{
-    
+    if (props.sectionName=='封面') {
+        emit('jumpTo',navigation.toc[0].href,navigation.toc[0].label)
+    }
+    for (let i = 0; i < navigation.toc.length-1; i++) {
+        const item = navigation.toc[i];
+        if (item.label.trim()==props.sectionName) {
+            const href=navigation.toc[i+1].href
+            emit('jumpTo',href,navigation.toc[i+1].label)
+            break
+        }
+    }
 }
+
+onBeforeMount(()=>{
+    mitter.on('navigation',e=>{
+        navigation=e
+    })
+    mitter.on('locations',value=>{
+        locations=value
+    })  
+})
 </script>
 
 <style lang="less" scoped>
