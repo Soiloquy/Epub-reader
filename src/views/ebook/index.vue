@@ -12,7 +12,7 @@
             <div class="title-wrapper" v-show="MenuShowFlag">
                 <div class="back-icon icon">&#xe7ed;</div>
                 <div class="right">
-                    <div class="bookmark-icon icon">&#xe610;</div>
+                    <div class="bookmark-icon icon" @click="addBookmark" :class="{'active':bookMark==true}">&#xe610;</div>
                     <div class="search-icon icon">&#xe607;</div>
                 </div>
             </div>
@@ -34,18 +34,21 @@
 </template>
 
 <script setup>
-import { ref,reactive,onBeforeMount,onMounted } from 'vue';
-import Epub from 'epubjs'
+import { ref,reactive,onBeforeMount} from 'vue';
+import Epub, { EpubCFI } from 'epubjs'
 import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
 import BottomNav from './bottomNav/bottom-nav.vue'
 import Catalog from './bottomNav/components/catalog.vue'
 import Toast from '../../utils/toast.vue'
+import { useStore } from 'vuex';
 
 let rendition
 let themes
 const DOWNLOAD_URL='/01.epub'
+// 控制上下菜单栏
 let MenuShowFlag=ref(false)
+// 控制设置菜单栏
 let SettingFlag=ref(false)
 const defaultFontSize=18
 let fontSizeIndex=3
@@ -112,10 +115,17 @@ let toast=ref()
 let spineItems=reactive([])
 let navigationToc=reactive([])
 let sectionName=ref('')
+let bookMark=ref(true)
+const store=useStore()
 
 // 根据链接跳转到指定位置
 const jumpTo=(href)=>{
-    rendition.display(href)
+    rendition.display(href).then((e)=>{
+        setTimeout(()=>{
+            let start=rendition.location.start
+            store.commit('getEpubCFIandPercentage',[start.cfi,start.percentage])
+        },100)
+    })
 }
 
 const fontSizeDown=()=>{
@@ -152,9 +162,11 @@ const onProgressInput=(progress)=>{
     // 通过locations.cfiFromPercentage(percentage) 返回每一页的epubCFI
     const location=percentage>0?locations.cfiFromPercentage(percentage):0
     rendition.display(location)
+    console.log(locations.locationFromCfi(location));
     // 通过locations.spine.items返回包含cfiBase、href、idref、url的
     // 对象类型的数组的所有章节
     spineItems=locations.spine.items
+    store.commit('getEpubCFIandPercentage',[location,percentage])
     // 通过forEach遍历 item.cfiBase找到每个章节的cfiBase
     spineItems.forEach(item => {
         // 用includes来判断每一页对应哪个cfiBase
@@ -166,17 +178,15 @@ const onProgressInput=(progress)=>{
                 const tocHref = navigationToc[index].href;
                 if (tocHref.includes(item.href)) {
                     sectionName.value=navigationToc[index].label.trim()
-                    // console.log(sectionName.value);
                 }
             }
         }
     });
 }
 
-let book
 const showEpub=()=>{
     // 生成book对象
-    book=Epub(DOWNLOAD_URL)
+    let book=Epub(DOWNLOAD_URL)
     // 通过book.renderTo()生成rendition对象
     rendition=book.renderTo('read',{
         width:window.innerWidth,
@@ -193,6 +203,7 @@ const showEpub=()=>{
     themes.fontSize(defaultFontSize+'px')
     // themes.register注册主题
     registerTheme()
+    console.log(book.spine);
     // 设置默认主题
     setTheme(defaultTheme.value)
     // 获取Locations对象
@@ -224,11 +235,15 @@ const judgeSettingFlag=()=>{
 const prevPage=()=>{
     if (!judgeSettingFlag()) {
         rendition.prev()
+        let start=rendition.location.start
+        store.commit('getEpubCFIandPercentage',[start.cfi,start.percentage])
     }
 }
 const nextPage=()=>{
     if (!judgeSettingFlag()) {
         rendition.next()
+        let start=rendition.location.start
+        store.commit('getEpubCFIandPercentage',[start.cfi,start.percentage])
     }
 }
 
@@ -254,9 +269,13 @@ onBeforeMount(()=>{
     })
 })
 
-onMounted(()=>{
-    
-})
+const addBookmark=()=>{
+    if (bookMark.value==false) {
+        bookMark.value=true   
+    }else{
+        bookMark.value=false
+    }
+}
 </script>
 
 <style lang="less" scoped>
@@ -318,6 +337,9 @@ onMounted(()=>{
                 line-height: 50px;
                 font-size: 26px;
                 margin-right: 18px;
+                &.active{
+                    color: rgb(255, 65, 65);
+                }
             }
             .search-icon{
                 width: 40px;

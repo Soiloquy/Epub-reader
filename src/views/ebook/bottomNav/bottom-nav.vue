@@ -12,16 +12,15 @@
                     </div>
                 </transition>
                 <div class="progress-bar">
-                    <div class="left icon">&#xe628;</div>
-                    <div class="center" @touchstart="bubbleShow" @touchend="bubbleDisappear">
+                    <div class="left icon" @click="prevSection">&#xe628;</div>
                         <input class="progress" type="range"
                                max="100" min="0" step="1"
                                :value="progress"
                                @input="onProgressInput(progressEle.value)"
+                               @touchstart="bubbleShow" @touchend="bubbleDisappear"
                                ref="progressEle"
                         >
-                    </div>
-                    <div class="right icon">&#xe642;</div>
+                    <div class="right icon" @click="nextSection">&#xe642;</div>
                 </div>
                 <div class="items">
                     <div class="catalog-icon icon"  @click="openCatalog">&#xe890;
@@ -45,10 +44,10 @@
 <script setup>
 import { defineProps,defineEmits,ref,watch } from 'vue';
 import mitter from '@/plugins/Bus';
-
-let localProgress=10
+import store from '@/store';
 let progressEle=ref()
-let progress=ref(localProgress)
+let progress=ref(10)
+// 控制显示当前阅读进度的气泡框
 let bubbleFlag=ref(false)
 const emit=defineEmits(['settingsChange','onProgressInput','update:progress'])
 const props=defineProps({
@@ -71,6 +70,7 @@ const openCatalog=()=>{
 
 let tmpSec=0
 const bubbleShow=()=>{
+    clearInterval(timer)
     tmpSec=progress.value
     if (!bubbleFlag.value) {
         bubbleFlag.value=true
@@ -92,10 +92,22 @@ const backSection=()=>{
     bubbleDisappear()
 }
 
-watch(()=>props.MenuShowFlag,()=>{
-    clearInterval(timer)
+watch(()=>props.MenuShowFlag,(newValue,oldValue)=>{
+    if (newValue) {
+        progress.value=Math.round(store.state.nowPagePercentage*100)
+        console.log(progress.value);
+        clearInterval(timer)
+    }
     bubbleFlag.value=false
 })
+
+const prevSection=()=>{
+
+}
+
+const nextSection=()=>{
+    
+}
 </script>
 
 <style lang="less" scoped>
@@ -164,29 +176,25 @@ watch(()=>props.MenuShowFlag,()=>{
             height: 60px;
             display: flex;
             align-items: center;
-            .center{
+            .progress {
                 width: 260px;
-                height: 100%;
-                line-height: 60px;
-                .progress {
-					width:100%;
-					height:2px;
-					background:-webkit-linear-gradient(#999,#999) no-repeat #ddd;
-					background-size:0 100%;
-					&:focus {
-						outline:none;
-					}
-					&::-webkit-slider-thumb {
-                        -webkit-appearance: none;
-                        height: 20px;
-                        width: 20px;
-                        border-radius: 50%;
-                        background: #fff;
-                        border: 1px solid #ddd;
-                        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .15);
-					}
+				height:2px;
+                margin-top: 5px;
+				background:-webkit-linear-gradient(#999,#999) no-repeat #ddd;
+				background-size:0 100%;
+				&:focus {
+					outline:none;
 				}
-            }
+				&::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    height: 20px;
+                    width: 20px;
+                    border-radius: 50%;
+                    background: #fff;
+                    border: 1px solid #ddd;
+                    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .15);
+				}
+			}
         }
         .items{
             display: flex;

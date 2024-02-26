@@ -43,6 +43,7 @@
 <script setup>
 import { defineProps,defineEmits,watch,ref } from 'vue';
 import { ScreenBrightness } from '@capacitor-community/screen-brightness';
+// import { Contents } from 'epubjs';
 
 
 const emit=defineEmits(['fontSizeDown','fontSizeUp','setTheme'])
@@ -56,6 +57,9 @@ let progressEle=ref()
 let brightnessAuto=ref(true)
 let interval=ref(2)
 let thisDefaultTheme=ref(props.defaultTheme)
+let body= document.body
+// let contents=new Contents(body)
+// console.log(contents);
 
 const changeBrightness=async ()=>{
     if (brightnessAuto.value==true) {
