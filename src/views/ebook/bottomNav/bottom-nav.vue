@@ -110,7 +110,6 @@ const backSection=()=>{
 
 watch(()=>props.MenuShowFlag,(newMenuShowFlag)=>{
     // 每次呼出导航栏 修改阅读进度条的值和存储当前阅读页面的epubcfi
-    console.log(newMenuShowFlag);
     if (newMenuShowFlag) {
         clearInterval(timer)
         progress.value=Math.round(store.state.nowPagePercentage*100)

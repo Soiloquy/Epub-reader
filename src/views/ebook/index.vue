@@ -8,15 +8,7 @@
                 <div class="right" @click="nextPage"></div>
             </div>
         </div>
-        <transition name="fade-down">
-            <div class="title-wrapper" v-show="MenuShowFlag">
-                <div class="back-icon icon">&#xe7ed;</div>
-                <div class="right">
-                    <div class="bookmark-icon icon" @click="addBookmark" :class="{'active':bookMark==true}">&#xe610;</div>
-                    <div class="search-icon icon">&#xe607;</div>
-                </div>
-            </div>
-        </transition>
+        <TopNav :MenuShowFlag="MenuShowFlag"></TopNav>
         <BottomNav @settingsChange="settingsChange"
                     :MenuShowFlag="MenuShowFlag"
                     :sectionName="sectionName"
@@ -38,12 +30,13 @@
 </template>
 
 <script setup>
-import { ref,reactive,onBeforeMount} from 'vue';
+import { ref,reactive,onBeforeMount,onBeforeUnmount,onMounted} from 'vue';
 import Epub from 'epubjs'
 import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
 import BottomNav from './bottomNav/bottom-nav.vue'
 import Catalog from './bottomNav/components/catalog.vue'
+import TopNav from './topNav/top-nav.vue';
 import Toast from '../../utils/toast.vue'
 import { useStore } from 'vuex';
 
@@ -119,9 +112,10 @@ let toast=ref()
 let spineItems=reactive([])
 let navigationToc=reactive([])
 let sectionName=ref('')
-let bookMark=ref(true)
 const store=useStore()
 let inputProgress=ref()
+let localProgress=ref()
+
 
 // 根据链接跳转到指定位置
 const jumpTo=(href,label)=>{
@@ -191,9 +185,27 @@ const onProgressInput=(progress)=>{
     // 通过locations.cfiFromPercentage(percentage) 返回每一页的epubCFI
     const location=percentage>0?locations.cfiFromPercentage(percentage):0
     rendition.display(location)
+    console.log(progress,location);
     store.commit('getEpubCFIandPercentage',[location,percentage])
     // console.log(locations.locationFromCfi(location));
     getSection(location)
+}
+
+// 检测阅读进度是否存储
+const checkReadPro=()=>{
+    if (localStorage.getItem('readProgress')==null||localStorage.readProgress=='NaN') {
+        localStorage.setItem('readProgress',0)
+        localProgress.value=0
+    }else{
+        localProgress.value=Number(localStorage.getItem('readProgress'))
+    }
+    inputProgress.value=localProgress.value*100
+    onProgressInput(localProgress.value*100)
+}
+
+// 挂载完进行调用
+if (rendition) {
+    checkReadPro()   
 }
 
 const showEpub=()=>{
@@ -228,9 +240,8 @@ const showEpub=()=>{
         locations=book.locations
         mitter.emit('locations',locations)
         navigationToc=book.navigation.toc
-        console.log(navigationToc);
-        let localProgress=10
-        onProgressInput(localProgress)
+        // 挂载时进行加载
+        checkReadPro()
         bookAvailable.value=true
     })
 }
@@ -282,13 +293,16 @@ onBeforeMount(()=>{
     })
 })
 
-const addBookmark=()=>{
-    if (bookMark.value==false) {
-        bookMark.value=true   
-    }else{
-        bookMark.value=false
+onMounted(()=>{
+    // 监听页面关闭时，存储数据
+    window.onbeforeunload = function () {
+        localStorage.readProgress=store.state.nowPagePercentage
     }
-}
+})
+
+onBeforeUnmount(()=>{
+    localStorage.readProgress=store.state.nowPagePercentage
+})
 </script>
 
 <style lang="less" scoped>
@@ -312,53 +326,6 @@ const addBookmark=()=>{
             }
             .right{
                 flex: 0 0 100px;
-            }
-        }
-    }
-    .title-wrapper{
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 101;
-        display: flex;
-        width: 100%;
-        height: 50px;
-        background-color: #fff;
-        color: #aaaaaa;
-        box-shadow: 0 3px 3px rgba(0, 0, 0, .15);
-        &.fade-down-enter-active,
-        &.fade-down-leave-active {
-        transition: opacity 0.3s ease;
-        }
-
-        &.fade-down-enter-from,
-        &.fade-down-leave-to {
-        opacity: 0;
-        }
-        .back-icon{
-            flex: 1;
-            height: 100%;
-            font-size: 28px;
-            line-height: 50px;
-            margin-left: 8px;
-        }
-        .right{
-            display: flex;
-            .bookmark-icon{
-                width: 40px;
-                height: 100%;
-                line-height: 50px;
-                font-size: 26px;
-                margin-right: 18px;
-                &.active{
-                    color: rgb(255, 65, 65);
-                }
-            }
-            .search-icon{
-                width: 40px;
-                height: 100%;
-                font-size: 28px;
-                padding-top: 3px;
             }
         }
     }
