@@ -5,7 +5,7 @@
         <div class="context">
             <span class="title">王小波：沉默的大多数（李银河独家授权，并亲自校订全稿。王小波逝世二十周年纪念版！特别收入从未面市的手稿！） (王小波)</span>
             <span class="time">16分钟前</span>
-            <button class="continue">继续</button>
+            <button class="continue" @click="readContinue">继续</button>
         </div>
     </div>
     <div class="content-box">
@@ -15,7 +15,7 @@
             <div class="context">
                 <span class="title">王小波：沉默的大多数（李银河独家授权，并亲自校订全稿。王小波逝世二十周年纪念版！特别收入从未面市的手稿！） (王小波)</span>
                 <span class="time">12分钟前</span>
-                <button class="continue">继续</button>
+                <button class="continue" @click="readContinue">继续</button>
             </div>
         </div>
         <div class="tip">注意：确保图书上传到云端，否则无法在其他设备上阅读图书信息</div>
@@ -25,15 +25,19 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import Footer from '../../components/Footer.vue'
 import Header from '../../components/header-bar-base.vue'
-    export default {
-        components:{
-            Footer,
-            Header
-        }
-    }
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
+const router=useRouter()
+const store=useStore()
+
+const readContinue=()=>{
+    router.push({path:'/ebook'})
+    store.commit('enterEbook',0)
+}
 </script>
 
 <style lang="less" scoped>

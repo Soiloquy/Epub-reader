@@ -21,11 +21,14 @@
 import Footer from '../../components/Footer.vue'
 import Header from '../../components/header-bar-search.vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const router=useRouter()
+const store=useStore()
 
 let gotoEbook=()=>{
     router.push({path:'/ebook'})
+    store.commit('enterEbook',1)
 }
 </script>
 

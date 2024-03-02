@@ -1,7 +1,7 @@
 <template>
     <transition name="fade-down">
         <div class="title-wrapper" v-show="MenuShowFlag">
-            <div class="back-icon icon">&#xe7ed;</div>
+            <div class="back-icon icon" @click="gotoBack">&#xe7ed;</div>
             <div class="right">
                 <div class="bookmark-icon icon" @click="addBookmark" :class="{'active':bookMark==true}">&#xe610;</div>
                 <div class="search-icon icon">&#xe607;</div>
@@ -12,8 +12,11 @@
 
 <script setup>
 import { defineProps,defineEmits,ref,watch,onBeforeMount, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import mitter from '@/plugins/Bus';
 import store from '@/store';
+
+const router=useRouter()
 
 let bookMark=ref(false)
 
@@ -28,6 +31,13 @@ const addBookmark=()=>{
     }else{
         bookMark.value=false
     }
+}
+
+const gotoBack=()=>{
+    console.log(store.state.enterEbook);
+    if (store.state.enterEbook==0) {
+        router.push({path:'/'})
+    }else router.push({path:'/bookshelf'})
 }
 </script>
 
