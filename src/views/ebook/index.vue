@@ -64,7 +64,10 @@ const themeList=([
         style:{
             body:{
                 'color':'#000',
-                'background':'#fff!important'
+                'background':'#fff!important',
+            },
+            ".bodycontent":{
+                "line-height": "1.4"
             }
         }
     },
@@ -73,7 +76,11 @@ const themeList=([
         style:{
             body:{
                 'color':'#5b4636',
-                'background':'#f4ecd8!important'
+                'background':'#f4ecd8!important',
+                "line-height": "36px"
+            },
+            ".bodycontent":{
+                "line-height": "1.4"
             }
         }
     },
@@ -82,7 +89,11 @@ const themeList=([
         style:{
             body:{
                 'color':'#333333',
-                'background':'#ceeaba!important'
+                'background':'#ceeaba!important',
+                "line-height": "36px"
+            },
+            ".bodycontent":{
+                "line-height": "1.4"
             }
         }
     },
@@ -92,6 +103,9 @@ const themeList=([
             body:{
                 'color':'#9d9fa3',
                 'background':'#45484a!important'
+            },
+            ".bodycontent":{
+                "line-height": "1.4"
             }
         }
     },
@@ -101,6 +115,9 @@ const themeList=([
             body:{
                 'color':'#b5aca2',
                 'background':'#333333!important',
+            },
+            ".bodycontent":{
+                "line-height": "1.4"
             }
         }
     },
@@ -225,6 +242,7 @@ const showEpub=()=>{
     themes=rendition.themes
     // 设置默认字体大小
     themes.fontSize(defaultFontSize+'px')
+    // themes.register({ "body": { }})
     // themes.register注册主题
     registerTheme()
     console.log(book.spine);
@@ -239,6 +257,7 @@ const showEpub=()=>{
     }).then(result=>{
         locations=book.locations
         mitter.emit('locations',locations)
+        mitter.emit('themes',themes)
         navigationToc=book.navigation.toc
         // 挂载时进行加载
         checkReadPro()

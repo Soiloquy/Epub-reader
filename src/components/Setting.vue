@@ -27,9 +27,9 @@
                 </div>
                 <div class="interval settings">
                     <div class="text">间距</div>
-                    <div class="icon interval-icon" :class="{'active':interval==1}">&#xe70b;</div>
-                    <div class="icon interval-icon" :class="{'active':interval==2}">&#xe72f;</div>
-                    <div class="icon interval-icon" :class="{'active':interval==3}">&#xe78e;</div>
+                    <div class="icon interval-icon" :class="{'active':interval=='1.2'}" @click="intervalChange('1.2')">&#xe70b;</div>
+                    <div class="icon interval-icon" :class="{'active':interval=='1.4'}" @click="intervalChange('1.4')">&#xe72f;</div>
+                    <div class="icon interval-icon" :class="{'active':interval=='1.8'}" @click="intervalChange('1.8')">&#xe78e;</div>
                 </div>
                 <div class="paging settings">翻页</div>
                 <div class="more-setting settings">更多设置
@@ -41,9 +41,9 @@
 </template>
 
 <script setup>
-import { defineProps,defineEmits,watch,ref } from 'vue';
+import { defineProps,defineEmits,watch,ref, reactive,onBeforeMount } from 'vue';
 import { ScreenBrightness } from '@capacitor-community/screen-brightness';
-// import { Contents } from 'epubjs';
+import mitter from '@/plugins/Bus';
 
 
 const emit=defineEmits(['fontSizeDown','fontSizeUp','setTheme'])
@@ -55,11 +55,9 @@ const props=defineProps({
 let progress=ref(30)
 let progressEle=ref()
 let brightnessAuto=ref(true)
-let interval=ref(2)
+let interval=ref('1.4')
 let thisDefaultTheme=ref(props.defaultTheme)
-let body= document.body
-// let contents=new Contents(body)
-// console.log(contents);
+let themes=reactive({})
 
 const changeBrightness=async ()=>{
     if (brightnessAuto.value==true) {
@@ -83,6 +81,13 @@ const changeBrightnessAuto=async()=>{
     await ScreenBrightness.setBrightness({brightness})
     progress.value=30
 }
+
+const intervalChange=(value)=>{
+    interval.value=value
+    themes.register("lineHeight",{".bodycontent":{"line-height": value+"!important"}})
+    themes.select("lineHeight")
+}
+
 const fontSizeDown=()=>{
     emit('fontSizeDown')
 }
@@ -94,6 +99,13 @@ const setTheme=(index)=>{
 }
 watch(()=>props.defaultTheme,(newVal)=>{
     thisDefaultTheme.value=newVal
+})
+
+onBeforeMount(() => {
+    mitter.on('themes',e=>{
+        themes=e
+        console.log(themes);
+    })
 })
 </script>
 
