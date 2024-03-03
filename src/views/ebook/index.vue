@@ -1,7 +1,7 @@
 <template>
     <div class="ebook">
         <div class="read-wrapper">
-            <div id="read"></div>
+            <div id="read" v-if="ebookDestory"></div>
             <div class="mask">
                 <div class="left" @click="prevPage"></div>
                 <div class="center" @click="toggleTitleAndMenu"></div>
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref,reactive,onBeforeMount,onBeforeUnmount,onMounted} from 'vue';
+import { ref,reactive,onBeforeMount,onBeforeUnmount,onMounted,onUnmounted} from 'vue';
 import Epub from 'epubjs'
 import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
@@ -40,6 +40,7 @@ import TopNav from './topNav/top-nav.vue';
 import Toast from '../../utils/toast.vue'
 import { useStore } from 'vuex';
 
+let ebookDestory=ref(true)
 let rendition
 let themes
 const DOWNLOAD_URL='/01.epub'
@@ -321,6 +322,10 @@ onMounted(()=>{
 
 onBeforeUnmount(()=>{
     localStorage.readProgress=store.state.nowPagePercentage
+})
+
+onUnmounted(()=>{
+    ebookDestory.value=false
 })
 </script>
 
