@@ -2,10 +2,10 @@
     <div class="ebook">
         <div class="read-wrapper">
             <div id="read" v-if="ebookDestory"></div>
-            <div class="mask">
-                <div class="left" @click="prevPage"></div>
+            <div class="mask" @touchstart="bookPagingStart" @touchend="bookPagingEnd">
+                <div class="left"></div>
                 <div class="center" @click="toggleTitleAndMenu"></div>
-                <div class="right" @click="nextPage"></div>
+                <div class="right"></div>
             </div>
         </div>
         <TopNav :MenuShowFlag="MenuShowFlag"></TopNav>
@@ -133,7 +133,9 @@ let sectionName=ref('')
 const store=useStore()
 let inputProgress=ref()
 let localProgress=ref()
-
+let touchStartX=ref()
+let touchStartY=ref()
+let touchStartTime=ref()
 
 // 根据链接跳转到指定位置
 const jumpTo=(href,label)=>{
@@ -156,6 +158,7 @@ const fontSizeDown=()=>{
         themes.fontSize(FontSize[fontSizeIndex].fontSize+'px')
     }
 }
+
 const fontSizeUp=()=>{
     if (fontSizeIndex>=6) {
         toast.value.showMessage('最大了')
@@ -165,10 +168,12 @@ const fontSizeUp=()=>{
         themes.fontSize(FontSize[fontSizeIndex].fontSize+'px')
     }
 }
+
 const setTheme=(index)=>{
     defaultTheme.value=index
     themes.select(themeList[index].name)
 }
+
 const registerTheme=()=>{
     themeList.forEach(theme=>{
         themes.register(theme.name,theme.style)
@@ -231,11 +236,12 @@ const showEpub=()=>{
     let book=Epub(DOWNLOAD_URL)
     // 通过book.renderTo()生成rendition对象
     rendition=book.renderTo('read',{
-        width:window.innerWidth,
-        height:window.innerHeight,
-        flow: "paginated",
-        manager: "continuous",
-        snap: true,
+        flow: "scrolled-continuous",
+        // width:window.innerWidth,
+        // height:window.innerHeight,
+        manager: "default",
+        spread: "auto",
+        restore: false
     })
     // 通过Rendition.display()渲染电子书
     rendition.display()
@@ -276,6 +282,8 @@ const judgeSettingFlag=()=>{
     }
     return true
 }
+
+// 上一页
 const prevPage=()=>{
     if (!judgeSettingFlag()) {
         rendition.prev()
@@ -283,6 +291,8 @@ const prevPage=()=>{
         store.commit('getEpubCFIandPercentage',[start.cfi,start.percentage])
     }
 }
+
+// 下一页
 const nextPage=()=>{
     if (!judgeSettingFlag()) {
         rendition.next()
@@ -291,12 +301,37 @@ const nextPage=()=>{
     }
 }
 
+const bookPagingStart=(e)=>{
+    touchStartX.value = e.changedTouches[0].pageX
+	touchStartY.value = e.changedTouches[0].pageY
+    touchStartTime.value=e.timeStamp
+}
+
 const toggleTitleAndMenu=()=>{
     if (SettingFlag.value!=true) {
         MenuShowFlag.value=!MenuShowFlag.value
     }else{
         SettingFlag.value=false
     }
+}
+
+const bookPagingEnd=(e)=>{
+    const offsetX = e.changedTouches[0].pageX - touchStartX.value
+	const offsetY = e.changedTouches[0].pageY - touchStartY.value
+	const time = e.timeStamp - touchStartTime.value
+	if (time<500&&Math.abs(offsetX) > (Math.abs(offsetY)+50) && offsetX > 100) {
+		prevPage();
+	} else if (time<500&&Math.abs(offsetX) > (Math.abs(offsetY)+50) && offsetX < -100) {
+		nextPage();
+	}else if(time<500&&offsetX==0 && offsetY == 0){
+        if (touchStartX.value<window.innerWidth/3) {
+            prevPage()
+        } else if(touchStartX.value>window.innerWidth-window.innerWidth/3-20){
+            nextPage()
+        }
+	}else if(time>=500){
+		
+	}
 }
 
 const settingsChange=()=>{
@@ -343,13 +378,13 @@ onUnmounted(()=>{
             width: 100%;
             height: 100%;
             .left{
-                flex: 0 0 100px;
+                flex:1;
             }
             .center{
                 flex: 1;
             }
             .right{
-                flex: 0 0 100px;
+                flex: 1;
             }
         }
     }

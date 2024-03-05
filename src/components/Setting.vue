@@ -104,7 +104,6 @@ watch(()=>props.defaultTheme,(newVal)=>{
 onBeforeMount(() => {
     mitter.on('themes',e=>{
         themes=e
-        console.log(themes);
     })
 })
 </script>
