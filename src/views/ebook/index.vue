@@ -31,6 +31,7 @@
 
 <script setup>
 import { ref,reactive,onBeforeMount,onBeforeUnmount,onMounted,onUnmounted} from 'vue';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import Epub from 'epubjs'
 import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
@@ -137,6 +138,18 @@ let touchStartX=ref()
 let touchStartY=ref()
 let touchStartTime=ref()
 
+
+// capacitor 读取手机document目录下的文件
+const readEbookFile = async () => {
+  const contents = await Filesystem.readFile({
+    path: 'text.txt',
+    directory: Directory.Documents,
+    encoding: Encoding.UTF8,
+  });
+
+  console.log('secrets:', contents);
+};
+
 // 根据链接跳转到指定位置
 const jumpTo=(href,label)=>{
     rendition.display(href).then((e)=>{
@@ -236,9 +249,9 @@ const showEpub=()=>{
     let book=Epub(DOWNLOAD_URL)
     // 通过book.renderTo()生成rendition对象
     rendition=book.renderTo('read',{
-        flow: "scrolled-continuous",
-        // width:window.innerWidth,
-        // height:window.innerHeight,
+        flow: "auto",
+        width:window.innerWidth,
+        height:window.innerHeight,
         manager: "default",
         spread: "auto",
         restore: false
@@ -319,18 +332,16 @@ const bookPagingEnd=(e)=>{
     const offsetX = e.changedTouches[0].pageX - touchStartX.value
 	const offsetY = e.changedTouches[0].pageY - touchStartY.value
 	const time = e.timeStamp - touchStartTime.value
-	if (time<500&&Math.abs(offsetX) > (Math.abs(offsetY)+50) && offsetX > 100) {
+	if (time<500&&Math.abs(offsetX) > (Math.abs(offsetY)+20) && offsetX > 50) {
 		prevPage();
-	} else if (time<500&&Math.abs(offsetX) > (Math.abs(offsetY)+50) && offsetX < -100) {
+	} else if (time<500&&Math.abs(offsetX) > (Math.abs(offsetY)+20) && offsetX < -50) {
 		nextPage();
-	}else if(time<500&&offsetX==0 && offsetY == 0){
+	}else if(time<500&&offsetX<=5 && offsetY <=5){
         if (touchStartX.value<window.innerWidth/3) {
             prevPage()
-        } else if(touchStartX.value>window.innerWidth-window.innerWidth/3-20){
+        } else if(touchStartX.value>window.innerWidth-window.innerWidth/3+10){
             nextPage()
         }
-	}else if(time>=500){
-		
 	}
 }
 
