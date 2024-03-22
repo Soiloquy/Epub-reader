@@ -1,38 +1,35 @@
 <template>
-    <div class="footer">
-        <div class="content fixed">
-            <div class="item">
-                <router-link to="/" active-class="nav-color">
-                    <div class="font">
-                        &#xe632;
-                        <div class="word">阅读中</div>
-                    </div>
-                </router-link>
-            </div>
-            <div class="item">
-                <router-link to="/bookshelf" active-class="nav-color">
-                    <div class="font">
-                        &#xe875;
-                        <div class="word">书架</div>
-                    </div>
-                </router-link>
-            </div>
-            <div class="item">
-                <router-link to="/cloud" active-class="nav-color">
-                    <div class="font">
-                        &#xe7d9;
-                        <div class="word">云端</div>
-                    </div>
-                </router-link>
-            </div>
-            <div class="item">
-                <router-link to="/home" active-class="nav-color">
-                    <div class="font">&#xe612;<div class="word">主页</div></div>
-                </router-link>
-            </div>
+    <div class="content fixed">
+        <div class="item">
+            <router-link to="/" active-class="nav-color">
+                <div class="font">
+                    &#xe632;
+                    <div class="word">阅读中</div>
+                </div>
+            </router-link>
+        </div>
+        <div class="item">
+            <router-link to="/bookshelf" active-class="nav-color">
+                <div class="font">
+                    &#xe875;
+                    <div class="word">书架</div>
+                </div>
+            </router-link>
+        </div>
+        <div class="item">
+            <router-link to="/cloud" active-class="nav-color">
+                <div class="font">
+                    &#xe7d9;
+                    <div class="word">云端</div>
+                </div>
+            </router-link>
+        </div>
+        <div class="item">
+            <router-link to="/home" active-class="nav-color">
+                <div class="font">&#xe612;<div class="word">主页</div></div>
+            </router-link>
         </div>
     </div>
-    
 </template>
 
 <script>
@@ -42,10 +39,6 @@
 <style lang="less" scoped>
 a{
     color: #3d3d3d;
-}
-.footer{
-    width: 100%;
-    height: 55px;
 }
 .content{
     width: 100%;
@@ -82,7 +75,7 @@ a{
     }
 }
 .fixed{
-    z-index: 1000;
+    z-index: 99;
     position: fixed;
     left: 0;
     bottom: 0;
