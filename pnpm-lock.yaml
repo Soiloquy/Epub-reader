@@ -23,6 +23,9 @@ dependencies:
   '@capacitor/filesystem':
     specifier: ^5.2.1
     version: 5.2.1(@capacitor/core@5.7.0)
+  '@ionic-native/file-chooser':
+    specifier: ^5.36.0
+    version: 5.36.0(@ionic-native/core@5.36.0)(rxjs@6.6.7)
   '@ionic/vue':
     specifier: ^7.7.1
     version: 7.7.1
@@ -32,6 +35,9 @@ dependencies:
   amfe-flexible:
     specifier: ^2.2.1
     version: 2.2.1
+  cordova-plugin-filechooser:
+    specifier: ^1.2.0
+    version: 1.2.0
   core-js:
     specifier: ^3.8.3
     version: 3.8.3
@@ -1481,6 +1487,26 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
+  /@ionic-native/core@5.36.0(rxjs@6.6.7):
+    resolution: {integrity: sha512-lOrkktadlKYbYf1LrDyAtsu1JnQ0oCCdkOU7iHQ8oXnNOkMwobFfD2m62F1CoOr0u9LIkpYnZSPjng8lZbmbNw==}
+    peerDependencies:
+      rxjs: ^5.5.0 || ^6.5.0
+    dependencies:
+      '@types/cordova': 11.0.3
+      rxjs: 6.6.7
+    dev: false
+
+  /@ionic-native/file-chooser@5.36.0(@ionic-native/core@5.36.0)(rxjs@6.6.7):
+    resolution: {integrity: sha512-e8uwc8a+5WTImeEJR1f81V4jYJCtPU8xtENsNR/KZIi1AAfB6Sk949UM+2mdKHAiG48NRqzIxh9x3mQX8MA4PQ==}
+    peerDependencies:
+      '@ionic-native/core': ^5.1.0
+      rxjs: ^5.5.0 || ^6.5.0
+    dependencies:
+      '@ionic-native/core': 5.36.0(rxjs@6.6.7)
+      '@types/cordova': 11.0.3
+      rxjs: 6.6.7
+    dev: false
+
   /@ionic/cli-framework-output@2.2.8:
     resolution: {integrity: sha512-TshtaFQsovB4NWRBydbNFawql6yul7d5bMiW1WYYf17hd99V6xdDdk3vtF51bw6sLkxON3bDQpWsnUc9/hVo3g==}
     engines: {node: '>=16.0.0'}
@@ -1753,6 +1779,10 @@ packages:
     dependencies:
       '@types/node': 20.11.6
     dev: true
+
+  /@types/cordova@11.0.3:
+    resolution: {integrity: sha512-kyuRQ40/NWQVhqGIHq78Ehu2Bf9Mlg0LhmSmis6ZFJK7z933FRfYi8tHe/k/0fB+PGfCf95rJC6TO7dopaFvAg==}
+    dev: false
 
   /@types/eslint-scope@3.7.7:
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -3449,6 +3479,10 @@ packages:
       serialize-javascript: 6.0.2
       webpack: 5.90.1
     dev: true
+
+  /cordova-plugin-filechooser@1.2.0:
+    resolution: {integrity: sha512-ycL9ML3wlRQ8wfK7vCG8gobv1f3VIdO52m0LA9mPSzLblbu0AXJs89yCRxZB87+08/V96qBxrmkxMsMmVYu5wA==}
+    dev: false
 
   /core-js-compat@3.35.1:
     resolution: {integrity: sha512-sftHa5qUJY3rs9Zht1WEnmkvXputCyDBczPnr7QDgL8n3qrF3CMXY4VPSYtOLLiOUJcah2WNXREd48iOl6mQIw==}
@@ -6576,6 +6610,13 @@ packages:
       queue-microtask: 1.2.3
     dev: true
 
+  /rxjs@6.6.7:
+    resolution: {integrity: sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==}
+    engines: {npm: '>=2.0.0'}
+    dependencies:
+      tslib: 1.14.1
+    dev: false
+
   /safe-buffer@5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
 
@@ -7151,6 +7192,10 @@ packages:
   /tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
+    dev: false
+
+  /tslib@1.14.1:
+    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: false
 
   /tslib@2.6.2:
