@@ -31,7 +31,6 @@
 
 <script setup>
 import { ref,reactive,onBeforeMount,onBeforeUnmount,onMounted,onUnmounted} from 'vue';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import Epub from 'epubjs'
 import mitter from '@/plugins/Bus';
 import Setting from '../../components/Setting.vue'
@@ -139,16 +138,6 @@ let touchStartY=ref()
 let touchStartTime=ref()
 
 
-// capacitor 读取手机document目录下的文件
-const readEbookFile = async () => {
-  const contents = await Filesystem.readFile({
-    path: 'text.txt',
-    directory: Directory.Documents,
-    encoding: Encoding.UTF8,
-  });
-
-  console.log('secrets:', contents);
-};
 
 // 根据链接跳转到指定位置
 const jumpTo=(href,label)=>{

@@ -19,10 +19,15 @@
                 </div>
         </div>
     </transition>
+    <FileChooserOptions></FileChooserOptions>
+    <FileChooser></FileChooser>
 </template>
 
 <script setup>
 import {ref} from 'vue'
+import { FileChooser,FileChooserOptions } from '@ionic-native/file-chooser';
+
+
 
 let inputValue=ref('')
 let inputBookFlag=ref(false)
@@ -65,9 +70,37 @@ const hiddenInputFooter=()=>{
     changFlag()
 }
 
-const inputLocalBook=()=>{
-    console.log('input');
+// capacitor 读取手机document目录下的文件 Android 10以上不支持读取公有目录的文件
+// const readEbookFile = async () => {
+//     Filesystem.requestPermissions().then(e=>{
+//         console.log(e.publicStorage);
+//         if (e.publicStorage=="granted") {
+//             const contents = Filesystem.readFile({
+//                 path: '/text.txt',
+//                 directory: Directory.Documents,
+//                 encoding: Encoding.UTF8,
+//             });
+//             console.log('secrets:', contents);   
+//         }
+//     })
+// };
+
+const readEbookFile=()=>{
+    FileChooser.open().then(uri=>{
+            console.log(uri);
+            //返回文件的uri
+            alert(uri);
+        }).catch(e => {
+            console.log(e)
+            alert(e);
+        });
+
 }
+
+const inputLocalBook=()=>{
+    readEbookFile()
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -133,7 +166,7 @@ const inputLocalBook=()=>{
 }
 .mask{
     position: relative;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
