@@ -31,6 +31,7 @@ import { FileChooser,FileChooserOptions } from '@ionic-native/file-chooser';
 
 let inputValue=ref('')
 let inputBookFlag=ref(false)
+let bookUrl=ref('')
 
 const props=defineProps({
     title:{type:String,default:''},
@@ -87,14 +88,18 @@ const hiddenInputFooter=()=>{
 
 const readEbookFile=()=>{
     FileChooser.open().then(uri=>{
-            console.log(uri);
-            //返回文件的uri
-            alert(uri);
-        }).catch(e => {
-            console.log(e)
-            alert(e);
+        const strRegex=/\.epub$/
+        if (strRegex.test(uri)) {
+            bookUrl.value=decodeURIComponent(uri)
+            console.log(bookUrl.value);
+            alert("导入成功");
+        }else{
+            alert("导入失败");
+        }
+        inputBookFlag.value=false
+    }).catch(e => {
+            inputBookFlag.value=false
         });
-
 }
 
 const inputLocalBook=()=>{

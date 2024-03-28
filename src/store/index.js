@@ -8,6 +8,8 @@ export default createStore({
         nowPagePercentage:0,
         // 存储进入ebook组件的页面:0为reading，1为bookshelf
         enterEbook:0,
+        // 存储当前设备图书的本地路径
+        // localbookUri:[]
     },
     mutations:{
         getEpubCFIandPercentage(state,[cfi,percentage]){

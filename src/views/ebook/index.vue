@@ -2,11 +2,11 @@
     <div class="ebook">
         <div class="read-wrapper">
             <div id="read" v-if="ebookDestory"></div>
-            <div class="mask" @touchstart="bookPagingStart" @touchend="bookPagingEnd">
+            <!-- <div class="mask" @touchstart="bookPagingStart" @touchend="bookPagingEnd">
                 <div class="left"></div>
                 <div class="center" @click="toggleTitleAndMenu"></div>
                 <div class="right"></div>
-            </div>
+            </div> -->
         </div>
         <TopNav :MenuShowFlag="MenuShowFlag"></TopNav>
         <BottomNav @settingsChange="settingsChange"
