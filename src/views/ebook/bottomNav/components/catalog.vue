@@ -40,6 +40,7 @@ onBeforeMount(()=>{
     })
     mitter.on('navigation',e=>{
         navigation.value=e
+        console.log(navigation);
     })
 })
 </script>

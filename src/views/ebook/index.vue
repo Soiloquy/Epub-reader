@@ -2,11 +2,11 @@
     <div class="ebook">
         <div class="read-wrapper">
             <div id="read" v-if="ebookDestory"></div>
-            <!-- <div class="mask" @touchstart="bookPagingStart" @touchend="bookPagingEnd">
+            <div class="mask" @touchstart="bookPagingStart" @touchend="bookPagingEnd">
                 <div class="left"></div>
                 <div class="center" @click="toggleTitleAndMenu"></div>
                 <div class="right"></div>
-            </div> -->
+            </div>
         </div>
         <TopNav :MenuShowFlag="MenuShowFlag"></TopNav>
         <BottomNav @settingsChange="settingsChange"
@@ -262,6 +262,7 @@ const showEpub=()=>{
     // book.ready 电子书解析完成时执行的回调
     book.ready.then(()=>{
         mitter.emit('navigation',book.navigation)
+        console.log(book.navigation,"1212");
         return book.locations.generate()
     }).then(result=>{
         locations=book.locations
